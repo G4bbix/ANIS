@@ -27,20 +27,17 @@ func calcWrapper(IntStr string, Operations []string) string {
 func doCalculatios(Value float64, Operations []string) string {
   var Result string = fmt.Sprintf("%f", Value)
   for _, Operation := range Operations {
+    Arg1, _ := strconv.ParseFloat(Result, 32)
     if strings.HasPrefix(Operation, "*") {
-      Arg1, _ := strconv.ParseFloat(Result, 32)
       Arg2, _ := strconv.ParseFloat(strings.Trim(Operation, "*"), 32)
       Result = fmt.Sprintf("%f", Arg1 * Arg2)
     } else if strings.HasPrefix(Operation, "/") {
-      Arg1, _ := strconv.ParseFloat(Result, 32)
       Arg2, _ := strconv.ParseFloat(strings.Trim(Operation, "/"), 32)
       Result = fmt.Sprintf("%f", Arg1 / Arg2)
     } else if strings.HasPrefix(Operation, "+") {
-      Arg1, _ := strconv.ParseFloat(Result, 32)
       Arg2, _ := strconv.ParseFloat(strings.Trim(Operation, "+"), 32)
       Result = fmt.Sprintf("%f", Arg1 + Arg2)
     } else if strings.HasPrefix(Operation, "-") {
-      Arg1, _ := strconv.ParseFloat(Result, 32)
       Arg2, _ := strconv.ParseFloat(strings.Trim(Operation, "-"), 32)
       Result = fmt.Sprintf("%f", Arg1 - Arg2)
     }
