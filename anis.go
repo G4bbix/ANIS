@@ -54,7 +54,12 @@ func cutOffTrailingZeros(Value string) string {
   var TrailingZeros bool = true
   // Loop over string reverse
   for i := len(Chars) - 1; i >= 0; i-- {
-    if (string(Chars[i]) == "." || string(Chars[i]) == "0") && TrailingZeros {
+    // If point is reached stop cutting off
+    if string(Chars[i]) == "." {
+      TrailingZeros = false
+      continue
+    }
+    if string(Chars[i]) == "0" && TrailingZeros {
       continue
     }
     if string(Chars[i]) != "0" {
