@@ -17,8 +17,17 @@ func printUsage() {
   fmt.Println("Input: String containing numbers")
 }
 
-func calcWrapper(IntStr string, Operations []string) string {
-  IntToCalc, _ := strconv.ParseFloat(IntStr, 32)
+func inveseString(input string) string {
+  runes := []rune(input)
+  for i, j := 0, len(runes) - 1; i < j; i, j = i + 1, j - 1 {
+    runes[i], runes[j] = runes[j], runes[i]
+  }
+  return string(runes)
+}
+
+func calcWrapper(intStr string, Operations []string) string {
+  intStrRev := inveseString(intStr)
+  IntToCalc, _ := strconv.ParseFloat(intStrRev, 32)
   Result := doCalculatios(IntToCalc, Operations)
   Result = cutOffTrailingZeros(Result)
   return Result
@@ -47,27 +56,35 @@ func doCalculatios(Value float64, Operations []string) string {
 
 func cutOffTrailingZeros(Value string) string {
   Chars := []rune(Value)
-  var ResultRev string
-  var TrailingZeros bool = true
+  var CharsTrimmed []rune
+
   // Loop over string reverse
   for i := len(Chars) - 1; i >= 0; i-- {
-    // If point is reached stop cutting off
-    if string(Chars[i]) == "." {
-      TrailingZeros = false
+    // If point (46) is reached stop cutting off
+    if Chars[i] == 46 {
+      // if no places behind the comma, do not add dot
+      var startingIndex int
+      if len(CharsTrimmed) == 0 {
+        startingIndex = i - 1
+      } else {
+        startingIndex = i
+      }
+      // Add remaining places and break
+      for j := startingIndex; j >= 0; j-- {
+        CharsTrimmed = append(CharsTrimmed, Chars[j])
+      }
+      break
+    }
+    // If zero (48), continue and dont add to CharsTrimmed
+    if Chars[i] == 48 {
       continue
     }
-    if string(Chars[i]) == "0" && TrailingZeros {
-      continue
-    }
-    if string(Chars[i]) != "0" {
-      TrailingZeros = false
-    }
-    ResultRev = ResultRev + string(Chars[i])
+    // Add places behind the comma
+    CharsTrimmed = append(CharsTrimmed, Chars[i])
   }
-
-  CharsRev := []rune(ResultRev)
+  CharsRev := []rune(CharsTrimmed)
   var Result []rune
-  for i := len(CharsRev) -1; i >= 0; i-- {
+  for i := len(CharsRev) - 1; i >= 0; i-- {
     Result = append(Result, CharsRev[i])
   }
 
@@ -97,25 +114,26 @@ func main() {
       }
     }
   }
-  var IntStr string = ""
+  var intStr string = ""
+  var output string = ""
   // Loop over INPUT
   for _, CHAR := range INPUT {
     if unicode.IsDigit(CHAR) {
-      IntStr = fmt.Sprintf("%s%s", string(CHAR), IntStr)
+      intStr = fmt.Sprintf("%s%s", string(CHAR), intStr)
     } else {
       // If whole number is over
-      if len(IntStr) > 0 {
-        Result := calcWrapper(IntStr, Operations)
-        fmt.Print(Result)
+      if len(intStr) > 0 {
+        Result := calcWrapper(intStr, Operations)
+        output += Result
       }
-      fmt.Print(string(CHAR))
-      IntStr = ""
+      output += string(CHAR)
+      intStr = ""
     }
   }
   // If the last char is a number calculate it too
-  if len(IntStr) > 0 {
-    Result := calcWrapper(IntStr, Operations)
-    fmt.Print(Result)
+  if len(intStr) > 0 {
+    Result := calcWrapper(intStr, Operations)
+    output += Result
   }
-  fmt.Println()
+  fmt.Println( output)
 }
